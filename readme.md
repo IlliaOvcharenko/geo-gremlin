@@ -1,6 +1,8 @@
-<img src="./figs/geo-gremlin-1.jpeg" alt="GeoGremlin logo" align="right" width="200" />
+<h1 align="left">
+  GeoGremlin
+  <img src="./figs/geo-gremlin-1.jpeg" alt="GeoGremlin logo" align="right" width="200" />
+</h1>
 
-# GeoGremlin
 Bunch of geo related stuff.
 
 - makes polygons orthogonal 
@@ -10,7 +12,6 @@ Bunch of geo related stuff.
 
 ### Install
 
-Install only vector dependencies:
 ```bash
 # vector only
 pip install "geo-gremlin[vector]"
@@ -29,8 +30,8 @@ If you need GDAL-based helpers (like `run_gdal_retiling`, `gdal_imread`), instal
 1. Install system GDAL separately (for example via `brew` on macOS or `conda`).
 2. Install Python bindings with the same version as your system GDAL to avoid ABI/version mismatch:
 
-### CLI scripts
-TBD
+<!-- ### CLI scripts -->
+<!-- TBD -->
 
 ### API
 #### Vector operations
@@ -309,8 +310,8 @@ Parameters:
 ![sdd](./figs/vector/demo-matplot.jpeg)
 Check [demo_vector.py](./examples/demo_vector.py).
 
-#### Raster ops
-TBD
+<!-- #### Raster ops -->
+<!-- TBD -->
 
 ### Dev
 For dev dependencies check [requirements.txt](./requirements.txt).
