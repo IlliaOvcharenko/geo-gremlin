@@ -10,9 +10,8 @@ data/
 # Notes
 notes/
 
-#Figs - except jpegs
+#Figs
 figs/*
-!figs/*.jpeg
 
 # Archive
 archive/
