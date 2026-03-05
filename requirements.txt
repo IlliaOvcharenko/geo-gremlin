@@ -1,0 +1,26 @@
+fire==0.6.0
+GDAL==3.10.0
+geopandas==1.0.1
+matplotlib==3.9.2
+numpy==2.0.0
+pandas==3.0.1
+pygit2==1.19.1
+PyYAML==6.0.2
+rtree==1.4.1
+shapely==2.0.6
+tqdm
+
+-e git+ssh://git@github.com/IlliaOvcharenko/logkit.git@2d5c36799f15d2cf926a1aa7fdc689d93a2cbb33#egg=logkit
+
+# Vector Module
+#  Fire
+#  Shapely
+#  GeoPandas and Pandas
+#  RTree
+#  tqdm
+#  numpy
+
+# Raster Module
+#  RasterIO
+#  GDAL?
+#  Shapely?
