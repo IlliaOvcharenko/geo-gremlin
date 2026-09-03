@@ -15,6 +15,7 @@ from shapely.affinity import affine_transform
 from itertools import chain
 from tqdm.cli import tqdm # pyright: ignore
 from rasterio.features import rasterize
+from typing import Callable
 
 
 def tile_to_poly(
@@ -76,9 +77,10 @@ async def download_worker(
     session: aiohttp.ClientSession,
     queue: asyncio.Queue,
     pbar,
-    wms_url: str,
+    wms_url: Callable[[int, int, int], str],
     save_folder: Path,
     worker_id: int = -1,
+    tile_ext: str = ".png",
     wld_suffix: str = ".wld",
     img_shape: tuple[int, int] = (256, 256),
 ) -> None:
@@ -90,7 +92,7 @@ async def download_worker(
             queue.task_done()
             break
 
-        url = wms_url.format(x=tile.x, y=tile.y, z=tile.z)
+        url = wms_url(tile.x, tile.y, tile.z)
         save_fn = save_folder / f"tile_{tile.x}_{tile.y}_{tile.z}"
 
         # logger.info(f"Worker {worker_id}, item {save_fn.stem}")
@@ -99,7 +101,7 @@ async def download_worker(
             if resp.status == 200:
                 # save img
                 img_f = await aiofiles.open(
-                    save_fn.with_suffix(".png"),
+                    save_fn.with_suffix(tile_ext),
                     mode="wb"
                 )
                 await img_f.write(await resp.read())
@@ -124,8 +126,9 @@ async def download_worker(
 
 async def download_tiles(
     tiles: list[mercantile.Tile],
+    tile_ext: str,
     save_folder: Path,
-    wms_url: str,
+    wms_url: Callable[[int, int, int], str],
     first_n_tiles: int | None,
     n_workers: int,
 
@@ -142,6 +145,8 @@ async def download_tiles(
             asyncio.create_task(download_worker(
                 sess, url_queue, download_pbar, 
                 wms_url, save_folder, worker_id,
+
+                tile_ext=tile_ext,
             ))
             for worker_id in range(n_workers)
         ]
@@ -163,6 +168,7 @@ def refine_border_tiles(
     first_n_tiles: int | None,
     wld_suffix: str,
     save_folder: Path,
+    tile_ext: str,
 ) -> None:
     """ Go through all border tiles (ones that intersects with a target shape)
     and fill with 0 area that is out of target shape.
@@ -198,7 +204,7 @@ def refine_border_tiles(
                 tile_geot_inv = [float(p) for p in tile_geot_inv]
 
                 # calculate bin mask for pixels to leave
-                tile_img = cv2.imread(str(tile_fn.with_suffix(".png")))
+                tile_img = cv2.imread(str(tile_fn.with_suffix(tile_ext)))
                 tile_shape = (tile_img.shape[0], tile_img.shape[1])
 
                 mask_poly = tile_poly.intersection(shape_poly)
@@ -214,7 +220,7 @@ def refine_border_tiles(
                 mask = mask.astype(bool)
                 tile_img[~mask] = 0
 
-                cv2.imwrite(str(tile_fn.with_suffix(".png")), tile_img)
+                cv2.imwrite(str(tile_fn.with_suffix(tile_ext)), tile_img)
 
 
 def run_gdal_retiling(

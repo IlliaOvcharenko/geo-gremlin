@@ -15,6 +15,9 @@ authors = [
     { name = "Illia Ovcharenko" }
 ]
 
+[project.scripts]
+geo-gremlin = "geo_gremlin.cli:main"
+
 [project.optional-dependencies]
 vector = [
     "numpy>=1.24",
